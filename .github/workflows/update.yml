@@ -8,9 +8,18 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    
+    # Даем права на запись
+    permissions:
+      contents: write
+    
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Токен с правами записи (автоматически создается)
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -24,8 +33,14 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add geosite-ru-blocked-all.srs
-          git diff --staged --quiet || git commit -m "Auto-update geosite rules $(date +'%Y-%m-%d %H:%M')"
-          git push
+          
+          # Проверяем есть ли изменения
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update geosite rules $(date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
