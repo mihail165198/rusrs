@@ -18,12 +18,12 @@ def get_latest_release_file():
         # Ищем файл ru-blocked-all.txt в активах релиза
         download_url = None
         for asset in release_info.get('assets', []):
-            if asset['name'] == 'ru-blocked-all.txt':
+            if asset['name'] == 'ru-blocked.txt':
                 download_url = asset['browser_download_url']
                 break
         
         if not download_url:
-            print("Файл ru-blocked-all.txt не найден в релизе!")
+            print("Файл ru-blocked.txt не найден в релизе!")
             return False
         
         print(f"Найден релиз: {release_info['tag_name']}")
