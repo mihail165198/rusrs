@@ -2,8 +2,8 @@ name: Update Russia Blocklist Daily
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Каждый день в 00:00 UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # Ежедневно в 00:00 UTC
+  workflow_dispatch:      # Ручной запуск
 
 jobs:
   update:
@@ -12,7 +12,8 @@ jobs:
       contents: write
     
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           
@@ -24,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Convert SRS to LST
-        run: python convert_srs_to_lst.py
+      - name: Download and convert blocklist
+        run: python download_ru_blocked.py
 
       - name: Commit and push changes
         run: |
@@ -34,8 +35,8 @@ jobs:
           git add blocked-russia.lst
           
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "Нет изменений для коммита"
           else
-            git commit -m "Auto-update Russia blocklist $(date +'%Y-%m-%d')"
+            git commit -m "Auto-update Russia blocklist $(date +'%Y-%m-%d %H:%M')"
             git push
           fi
