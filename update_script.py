@@ -8,7 +8,7 @@ from datetime import datetime
 ZIP_URL = "https://github.com/runetfreedom/russia-v2ray-rules-dat/releases/latest/download/sing-box.zip"
 # Путь к нужному файлу внутри архива
 TARGET_FILE = "rule-set-geosite/geosite-ru-blocked-all.srs"
-OUTPUT_FILE = "russia_inside1.srs"  # Итоговый файл
+OUTPUT_FILE = "geosite-ru-blocked-all.srs"  # Итоговый файл
 
 def update_file():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Начало обновления...")
