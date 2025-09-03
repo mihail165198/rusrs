@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Update all rules files
+      - name: Update all rules files with backup
         run: python update_script.py
 
       - name: Commit and push changes
@@ -32,16 +32,22 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Добавляем все файлы
+          # Добавляем все новые файлы
           git add geoip-ru-blocked.srs \
                  geoip-ru-blocked-community.srs \
                  geosite-ru-blocked-all.srs \
                  geosite-speedtest.srs \
-                 geosite-twitch.srs
+                 geosite-twitch.srs \
+                 geosite-discord.srs
+          
+          # Также добавляем папку old если там есть файлы
+          if [ -d "old" ] && [ "$(ls -A old)" ]; then
+            git add old/
+          fi
           
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Auto-update all rules $(date +'%Y-%m-%d %H:%M')"
+            git commit -m "Auto-update all rules with backup $(date +'%Y-%m-%d %H:%M')"
             git push
           fi
