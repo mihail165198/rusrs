@@ -2,6 +2,7 @@ import requests
 import zipfile
 import io
 import os
+import shutil
 from datetime import datetime
 
 # URL последней версии архива
@@ -13,17 +14,53 @@ TARGET_FILES = {
     "rule-set-geoip/geoip-ru-blocked-community.srs": "geoip-ru-blocked-community.srs", 
     "rule-set-geosite/geosite-ru-blocked-all.srs": "geosite-ru-blocked-all.srs",
     "rule-set-geosite/geosite-category-speedtest.srs": "geosite-speedtest.srs",
-    "rule-set-geosite/geosite-twitch.srs": "geosite-twitch.srs"
+    "rule-set-geosite/geosite-twitch.srs": "geosite-twitch.srs",
+    "rule-set-geosite/geosite-discord.srs": "geosite-discord.srs"
 }
+
+def create_old_directory():
+    """Создает папку old если ее нет"""
+    old_dir = "old"
+    if not os.path.exists(old_dir):
+        os.makedirs(old_dir)
+        print(f"📁 Создана папка: {old_dir}")
+    return old_dir
+
+def move_old_files(old_dir):
+    """Перемещает старые файлы в папку old"""
+    moved_files = []
+    for output_file in TARGET_FILES.values():
+        if os.path.exists(output_file):
+            # Создаем уникальное имя с timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            old_filename = f"{output_file}.{timestamp}.old"
+            old_path = os.path.join(old_dir, old_filename)
+            
+            # Перемещаем файл
+            shutil.move(output_file, old_path)
+            moved_files.append((output_file, old_filename))
+            print(f"📦 Перемещен: {output_file} -> old/{old_filename}")
+    
+    return moved_files
 
 def update_files():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Начало обновления файлов...")
     print(f"Репозиторий: https://github.com/mihail165198/rusrs")
     print("=" * 60)
     
+    # Создаем папку для старых файлов
+    old_dir = create_old_directory()
+    
+    # Перемещаем старые файлы
+    moved_files = move_old_files(old_dir)
+    if moved_files:
+        print(f"📦 Перемещено файлов: {len(moved_files)}")
+    else:
+        print("📦 Старые файлы не найдены")
+    
     try:
         # Скачать архив
-        print("📦 Скачивание архива...")
+        print("\n📦 Скачивание архива...")
         response = requests.get(ZIP_URL, timeout=30)
         response.raise_for_status()
         print("✅ Архив успешно скачан")
@@ -35,6 +72,7 @@ def update_files():
             
             success_count = 0
             total_size = 0
+            failed_files = []
             
             # Извлечь каждый целевой файл
             for target_path, output_file in TARGET_FILES.items():
@@ -48,6 +86,7 @@ def update_files():
                     print(f"❌ Файл не найден в архиве!")
                     if similar_files:
                         print(f"   Похожие файлы: {similar_files}")
+                    failed_files.append(target_path)
                     continue
                 
                 # Извлечь файл
@@ -66,14 +105,20 @@ def update_files():
                     
                 except Exception as e:
                     print(f"❌ Ошибка при обработке: {e}")
+                    failed_files.append(target_path)
             
             # Вывести итоги
             print(f"\n{'='*60}")
             print(f"📊 ИТОГ: Успешно обработано {success_count} из {len(TARGET_FILES)} файлов")
             print(f"💾 Общий размер: {total_size:.2f} KB")
             
+            if failed_files:
+                print(f"\n❌ Не удалось обработать файлы:")
+                for failed_file in failed_files:
+                    print(f"   - {failed_file}")
+            
             if success_count > 0:
-                print("\n📋 Обновленные файлы:")
+                print("\n📋 Новые файлы:")
                 for output_file in TARGET_FILES.values():
                     if os.path.exists(output_file):
                         file_size = os.path.getsize(output_file) / 1024
