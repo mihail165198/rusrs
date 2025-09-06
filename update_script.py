@@ -13,7 +13,7 @@ TARGET_FILES = {
     "rule-set-geoip/geoip-ru-blocked.srs": "geoip-ru-blocked.srs",
     "rule-set-geoip/geoip-ru-blocked-community.srs": "geoip-ru-blocked-community.srs", 
     "rule-set-geosite/geosite-ru-blocked-all.srs": "geosite-ru-blocked-all.srs",
-    "rule-set-geosite/geosite-category-speedtest.srs": "geosite-speedtest.srs",
+    "rule-set-geosite/geosite-category-ads-all.srs": "geosite-category-ads-all.srs",
     "rule-set-geosite/geosite-twitch.srs": "geosite-twitch.srs",
     "rule-set-geosite/geosite-discord.srs": "geosite-discord.srs"
 }
@@ -23,7 +23,7 @@ def create_old_directory():
     old_dir = "old"
     if not os.path.exists(old_dir):
         os.makedirs(old_dir)
-        print(f"📁 Создана папка: {old_dir}")
+        print(f"📁 Создана папку: {old_dir}")
     return old_dir
 
 def move_old_files(old_dir):
