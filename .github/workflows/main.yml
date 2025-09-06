@@ -36,7 +36,7 @@ jobs:
           git add geoip-ru-blocked.srs \
                  geoip-ru-blocked-community.srs \
                  geosite-ru-blocked-all.srs \
-                 geosite-speedtest.srs \
+                 geosite-category-ads-all.srs \
                  geosite-twitch.srs \
                  geosite-discord.srs
           
