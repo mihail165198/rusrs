@@ -23,11 +23,11 @@ def create_old_directory():
     old_dir = "old"
     if not os.path.exists(old_dir):
         os.makedirs(old_dir)
-        print(f"📁 Создана папку: {old_dir}")
+        print(f"📁 Создана папка: {old_dir}")
     return old_dir
 
-def move_old_files(old_dir):
-    """Перемещает старые файлы в папку old"""
+def backup_and_remove_old_files(old_dir):
+    """Перемещает старые файлы в папку old и удаляет из корневого каталога"""
     moved_files = []
     for output_file in TARGET_FILES.values():
         if os.path.exists(output_file):
@@ -36,12 +36,40 @@ def move_old_files(old_dir):
             old_filename = f"{output_file}.{timestamp}.old"
             old_path = os.path.join(old_dir, old_filename)
             
-            # Перемещаем файл
+            # Перемещаем файл в папку old (это удаляет его из корневого каталога)
             shutil.move(output_file, old_path)
             moved_files.append((output_file, old_filename))
-            print(f"📦 Перемещен: {output_file} -> old/{old_filename}")
+            print(f"📦 Перемещен и удален: {output_file} -> old/{old_filename}")
     
     return moved_files
+
+def cleanup_old_backups(old_dir, max_backups=5):
+    """Очищает старые backup файлы, оставляя только последние max_backups"""
+    try:
+        # Получаем все файлы в папке old
+        all_files = []
+        for filename in os.listdir(old_dir):
+            file_path = os.path.join(old_dir, filename)
+            if os.path.isfile(file_path):
+                all_files.append((filename, os.path.getmtime(file_path)))
+        
+        # Сортируем по времени изменения (сначала старые)
+        all_files.sort(key=lambda x: x[1])
+        
+        # Удаляем старые файлы, оставляя только последние max_backups
+        if len(all_files) > max_backups:
+            files_to_delete = all_files[:-max_backups]
+            for filename, _ in files_to_delete:
+                file_path = os.path.join(old_dir, filename)
+                os.remove(file_path)
+                print(f"🗑️  Удален старый backup: old/{filename}")
+            
+            return len(files_to_delete)
+    
+    except Exception as e:
+        print(f"❌ Ошибка при очистке backup: {e}")
+    
+    return 0
 
 def update_files():
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Начало обновления файлов...")
@@ -51,12 +79,17 @@ def update_files():
     # Создаем папку для старых файлов
     old_dir = create_old_directory()
     
-    # Перемещаем старые файлы
-    moved_files = move_old_files(old_dir)
+    # Перемещаем и удаляем старые файлы из корневого каталога
+    moved_files = backup_and_remove_old_files(old_dir)
     if moved_files:
-        print(f"📦 Перемещено файлов: {len(moved_files)}")
+        print(f"📦 Перемещено и удалено файлов: {len(moved_files)}")
     else:
-        print("📦 Старые файлы не найдены")
+        print("📦 Старые файлы не найдены в корневом каталоге")
+    
+    # Очищаем старые backup (оставляем только последние 5)
+    deleted_count = cleanup_old_backups(old_dir, max_backups=5)
+    if deleted_count > 0:
+        print(f"🗑️  Удалено старых backup: {deleted_count}")
     
     try:
         # Скачать архив
@@ -94,13 +127,13 @@ def update_files():
                     with zip_ref.open(target_path) as source_file:
                         content = source_file.read()
                     
-                    # Сохранить файл
+                    # Сохранить файл (теперь в пустом корневом каталоге)
                     with open(output_file, "wb") as f:
                         f.write(content)
                     
                     file_size_kb = len(content) / 1024
                     total_size += file_size_kb
-                    print(f"✅ Успешно сохранен! Размер: {file_size_kb:.2f} KB")
+                    print(f"✅ Успешно создан новый файл! Размер: {file_size_kb:.2f} KB")
                     success_count += 1
                     
                 except Exception as e:
@@ -109,16 +142,16 @@ def update_files():
             
             # Вывести итоги
             print(f"\n{'='*60}")
-            print(f"📊 ИТОГ: Успешно обработано {success_count} из {len(TARGET_FILES)} файлов")
-            print(f"💾 Общий размер: {total_size:.2f} KB")
+            print(f"📊 ИТОГ: Успешно создано {success_count} из {len(TARGET_FILES)} файлов")
+            print(f"💾 Общий размер новых файлов: {total_size:.2f} KB")
             
             if failed_files:
-                print(f"\n❌ Не удалось обработать файлы:")
+                print(f"\n❌ Не удалось создать файлы:")
                 for failed_file in failed_files:
                     print(f"   - {failed_file}")
             
             if success_count > 0:
-                print("\n📋 Новые файлы:")
+                print("\n📋 Новые файлы в корневом каталоге:")
                 for output_file in TARGET_FILES.values():
                     if os.path.exists(output_file):
                         file_size = os.path.getsize(output_file) / 1024
