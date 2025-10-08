@@ -16,6 +16,7 @@ from datetime import datetime
 ZIP_URL = "https://github.com/runetfreedom/russia-v2ray-rules-dat/releases/latest/download/sing-box.zip"
 MAX_RETRIES = 3
 RETRY_DELAY = 5
+PAUSE_AFTER_BACKUP = 20  # Пауза после backup в секундах
 
 # Все файлы для обновления
 FILES_TO_UPDATE = {
@@ -27,7 +28,8 @@ FILES_TO_UPDATE = {
     "rule-set-geosite/geosite-ru-blocked-all.srs": "geosite-ru-blocked-all.srs",
     "rule-set-geosite/geosite-category-ads-all.srs": "geosite-category-ads-all.srs",
     "rule-set-geosite/geosite-twitch.srs": "geosite-twitch.srs",
-    "rule-set-geosite/geosite-discord.srs": "geosite-discord.srs"
+    "rule-set-geosite/geosite-discord.srs": "geosite-discord.srs",
+    "rule-set-geosite/geosite-steam.srs": "geosite-steam.srs"  # Новый файл
 }
 
 def log_message(message, level="INFO"):
@@ -107,6 +109,15 @@ def backup_existing_files():
     
     return backed_up_files
 
+def pause_after_backup():
+    """Пауза после удаления старых файлов"""
+    log_message(f"Пауза {PAUSE_AFTER_BACKUP} секунд после удаления старых файлов...")
+    for i in range(PAUSE_AFTER_BACKUP, 0, -1):
+        print(f"Осталось {i} секунд...", end='\r')
+        time.sleep(1)
+    print(" " * 50, end='\r')  # Очищаем строку
+    log_message("Пауза завершена, продолжаем обновление")
+
 def cleanup_old_backups():
     """Очищает старые backup файлы"""
     backup_dir = "old"
@@ -149,9 +160,13 @@ def update_all_files():
     # Шаг 1: Backup существующих файлов
     log_message("Создание backup существующих файлов...")
     backed_up_files = backup_existing_files()
-    log_message(f"Создано backup: {len(backed_up_files)} файлов")
+    log_message(f"Создано backup: {len(backup_existing_files)} файлов")
     
-    # Шаг 2: Скачивание архива
+    # Шаг 2: Пауза после удаления старых файлов
+    if backed_up_files:
+        pause_after_backup()
+    
+    # Шаг 3: Скачивание архива
     log_message("Скачивание архива...")
     try:
         zip_content = download_archive_with_retry()
@@ -159,7 +174,7 @@ def update_all_files():
         log_message("Не удалось продолжить без архива", "ERROR")
         return False
     
-    # Шаг 3: Получение списка файлов в архиве
+    # Шаг 4: Получение списка файлов в архиве
     log_message("Анализ архива...")
     try:
         archive_files = get_archive_files(zip_content)
@@ -168,7 +183,7 @@ def update_all_files():
         log_message("Не удалось проанализировать архив", "ERROR")
         return False
     
-    # Шаг 4: Извлечение всех файлов
+    # Шаг 5: Извлечение всех файлов
     log_message("Извлечение файлов...")
     success_count = 0
     failed_files = []
@@ -183,13 +198,13 @@ def update_all_files():
             log_message(f"Файл не найден в архиве: {archive_path}", "WARNING")
             failed_files.append(archive_path)
     
-    # Шаг 5: Очистка старых backup
+    # Шаг 6: Очистка старых backup
     log_message("Очистка старых backup...")
     deleted_backups = cleanup_old_backups()
     if deleted_backups > 0:
         log_message(f"Удалено старых backup: {deleted_backups}")
     
-    # Шаг 6: Итоги
+    # Шаг 7: Итоги
     log_message("=" * 60)
     log_message("ИТОГИ ОБНОВЛЕНИЯ")
     log_message("=" * 60)
