@@ -160,7 +160,7 @@ def update_all_files():
     # Шаг 1: Backup существующих файлов
     log_message("Создание backup существующих файлов...")
     backed_up_files = backup_existing_files()
-    log_message(f"Создано backup: {len(backup_existing_files)} файлов")
+    log_message(f"Создано backup: {len(backed_up_files)} файлов")  # ИСПРАВЛЕННАЯ СТРОКА
     
     # Шаг 2: Пауза после удаления старых файлов
     if backed_up_files:
