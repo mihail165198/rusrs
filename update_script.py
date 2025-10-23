@@ -29,7 +29,8 @@ FILES_TO_UPDATE = {
     "rule-set-geosite/geosite-category-ads-all.srs": "geosite-category-ads-all.srs",
     "rule-set-geosite/geosite-twitch.srs": "geosite-twitch.srs",
     "rule-set-geosite/geosite-discord.srs": "geosite-discord.srs",
-    "rule-set-geosite/geosite-steam.srs": "geosite-steam.srs"  # Новый файл
+    "rule-set-geosite/geosite-steam.srs": "geosite-steam.srs",
+    "rule-set-geosite/geosite-amazon.srs": "geosite-amazon.srs"  # Новый файл
 }
 
 def log_message(message, level="INFO"):
@@ -160,7 +161,7 @@ def update_all_files():
     # Шаг 1: Backup существующих файлов
     log_message("Создание backup существующих файлов...")
     backed_up_files = backup_existing_files()
-    log_message(f"Создано backup: {len(backed_up_files)} файлов")  # ИСПРАВЛЕННАЯ СТРОКА
+    log_message(f"Создано backup: {len(backed_up_files)} файлов")
     
     # Шаг 2: Пауза после удаления старых файлов
     if backed_up_files:
@@ -221,6 +222,13 @@ def update_all_files():
         log_message("Не удалось обновить:", "WARNING")
         for failed in failed_files:
             log_message(f"  ✗ {failed}", "WARNING")
+    
+    # Ссылки для скачивания
+    log_message("\n🌐 Прямые ссылки для скачивания:")
+    for output_file in FILES_TO_UPDATE.values():
+        if os.path.exists(output_file):
+            download_url = f"https://raw.githubusercontent.com/mihail165198/rusrs/main/{output_file}"
+            print(f"   - {download_url}")
     
     log_message("=" * 60)
     return success_count > 0
