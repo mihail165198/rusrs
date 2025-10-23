@@ -39,7 +39,8 @@ jobs:
                  geosite-category-ads-all.srs \
                  geosite-twitch.srs \
                  geosite-discord.srs \
-                 geosite-steam.srs
+                 geosite-steam.srs \
+                 geosite-amazon.srs
           
           # Добавляем папку old если есть изменения
           if [ -d "old" ] && [ "$(ls -A old)" ]; then
