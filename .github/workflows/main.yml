@@ -40,7 +40,8 @@ jobs:
                  geosite-twitch.srs \
                  geosite-discord.srs \
                  geosite-steam.srs \
-                 geosite-amazon.srs
+                 geosite-amazon.srs \
+                 geosite-speedtest.srs
           
           # Добавляем папку old если есть изменения
           if [ -d "old" ] && [ "$(ls -A old)" ]; then
