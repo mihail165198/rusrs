@@ -30,7 +30,8 @@ FILES_TO_UPDATE = {
     "rule-set-geosite/geosite-twitch.srs": "geosite-twitch.srs",
     "rule-set-geosite/geosite-discord.srs": "geosite-discord.srs",
     "rule-set-geosite/geosite-steam.srs": "geosite-steam.srs",
-    "rule-set-geosite/geosite-amazon.srs": "geosite-amazon.srs"  # Новый файл
+    "rule-set-geosite/geosite-amazon.srs": "geosite-amazon.srs",
+    "rule-set-geosite/geosite-speedtest.srs": "geosite-speedtest.srs"  # Новый файл
 }
 
 def log_message(message, level="INFO"):
