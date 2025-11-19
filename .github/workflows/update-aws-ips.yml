@@ -3,20 +3,20 @@ name: Update AWS IP Ranges
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 6 * * *'  # Ежедневно в 06:00 UTC
 
 jobs:
   update-ips:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # Даем разрешение на запись
+      contents: write
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}   # Явно передаем токен
-
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -31,14 +31,16 @@ jobs:
       run: |
         python update_aws_ips.py
         
-    - name: Commit and push if changed
+    - name: Commit and push changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
         git add aws.txt
+        
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Update AWS IP ranges [automated]"
+          git commit -m "Auto-update: AWS IP ranges $(date +'%Y-%m-%d %H:%M')"
           git push
         fi
