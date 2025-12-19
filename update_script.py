@@ -32,8 +32,11 @@ FILES_TO_UPDATE = {
     "rule-set-geosite/geosite-amazon.srs": "geosite-amazon.srs",
     "rule-set-geosite/geosite-speedtest.srs": "geosite-speedtest.srs",
     "rule-set-geosite/geosite-google.srs": "geosite-google.srs",
-    "rule-set-geosite/geosite-aws.srs": "geosite-aws.srs",  # Новый файл
-    "rule-set-geosite/geosite-azure.srs": "geosite-azure.srs"  # Новый файл
+    "rule-set-geosite/geosite-aws.srs": "geosite-aws.srs",
+    "rule-set-geosite/geosite-azure.srs": "geosite-azure.srs",
+    "rule-set-geosite/geosite-microsoft.srs": "geosite-microsoft.srs",  # Новый файл
+    "rule-set-geosite/geosite-win-spy.srs": "geosite-win-spy.srs",      # Новый файл
+    "rule-set-geosite/geosite-win-update.srs": "geosite-win-update.srs" # Новый файл
 }
 
 def log_message(message, level="INFO"):
