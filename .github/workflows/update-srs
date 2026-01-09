@@ -1,0 +1,60 @@
+name: Update SRS rules
+
+on:
+  schedule:
+    # 2 раза в день: 00:00 и 12:00 UTC
+    - cron: "0 0,12 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download sing-box archive
+        run: |
+          curl -L -o sing-box.zip \
+          https://github.com/runetfreedom/russia-v2ray-rules-dat/releases/latest/download/sing-box.zip
+
+      - name: Extract archive
+        run: |
+          unzip -o sing-box.zip -d sing-box
+          rm sing-box.zip
+
+      - name: Copy required SRS files
+        run: |
+          # geoip
+          cp -f sing-box/rule-set-geoip/geoip-ru-blocked.srs .
+          cp -f sing-box/rule-set-geoip/geoip-ru-blocked-community.srs .
+
+          # geosite
+          cp -f sing-box/rule-set-geosite/geosite-ru-blocked-all.srs .
+          cp -f sing-box/rule-set-geosite/geosite-category-ads-all.srs .
+          cp -f sing-box/rule-set-geosite/geosite-twitch.srs .
+          cp -f sing-box/rule-set-geosite/geosite-discord.srs .
+          cp -f sing-box/rule-set-geosite/geosite-steam.srs .
+          cp -f sing-box/rule-set-geosite/geosite-amazon.srs .
+          cp -f sing-box/rule-set-geosite/geosite-speedtest.srs .
+          cp -f sing-box/rule-set-geosite/geosite-google.srs .
+          cp -f sing-box/rule-set-geosite/geosite-aws.srs .
+          cp -f sing-box/rule-set-geosite/geosite-azure.srs .
+          cp -f sing-box/rule-set-geosite/geosite-microsoft.srs .
+          cp -f sing-box/rule-set-geosite/geosite-win-spy.srs .
+          cp -f sing-box/rule-set-geosite/geosite-win-update.srs .
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add *.srs
+
+          if git diff --cached --quiet; then
+            echo "No changes detected"
+          else
+            git commit -m "Update sing-box SRS rules"
+            git push
+          fi
