@@ -6,7 +6,6 @@ on:
     - cron: "0 0,12 * * *"
   workflow_dispatch:
 
-# 🔴 ВАЖНО: разрешаем запись в репозиторий
 permissions:
   contents: write
 
@@ -31,10 +30,13 @@ jobs:
       - name: Copy required SRS files
         run: |
           # geoip
+          cp -f sing-box/rule-set-geoip/geoip-ru.srs .
           cp -f sing-box/rule-set-geoip/geoip-ru-blocked.srs .
           cp -f sing-box/rule-set-geoip/geoip-ru-blocked-community.srs .
 
           # geosite
+          cp -f sing-box/rule-set-geosite/geosite-category-ru.srs .
+          cp -f sing-box/rule-set-geosite/geosite-category-voip.srs .
           cp -f sing-box/rule-set-geosite/geosite-ru-blocked-all.srs .
           cp -f sing-box/rule-set-geosite/geosite-category-ads-all.srs .
           cp -f sing-box/rule-set-geosite/geosite-twitch.srs .
@@ -48,6 +50,8 @@ jobs:
           cp -f sing-box/rule-set-geosite/geosite-microsoft.srs .
           cp -f sing-box/rule-set-geosite/geosite-win-spy.srs .
           cp -f sing-box/rule-set-geosite/geosite-win-update.srs .
+          cp -f sing-box/rule-set-geosite/geosite-yandex.srs .
+          cp -f sing-box/rule-set-geosite/geosite-vk.srs .
 
       - name: Commit and push if changed
         run: |
