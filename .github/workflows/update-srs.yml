@@ -37,7 +37,8 @@ jobs:
           # geosite
           cp -f sing-box/rule-set-geosite/geosite-category-ru.srs .
           cp -f sing-box/rule-set-geosite/geosite-category-voip.srs .
-          cp -f sing-box/rule-set-geosite/geosite-ru-blocked.srs .
+          cp -f sing-box/rule-set-geosite/geosite-ru-blocked.srs .  
+          cp -f sing-box/rule-set-geosite/geosite-ru-blocked-all.srs .
           cp -f sing-box/rule-set-geosite/geosite-category-ads-all.srs .
           cp -f sing-box/rule-set-geosite/geosite-twitch.srs .
           cp -f sing-box/rule-set-geosite/geosite-discord.srs .
