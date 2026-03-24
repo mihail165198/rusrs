@@ -26,7 +26,11 @@ jobs:
         run: |
           unzip -o sing-box.zip -d sing-box
           rm sing-box.zip
-
+          
+      - name: Remove old SRS files
+        run: |
+          rm -f *.srs
+          
       - name: Copy required SRS files
         run: |
           # geoip
