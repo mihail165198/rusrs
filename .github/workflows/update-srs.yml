@@ -53,6 +53,7 @@ jobs:
           cp -f sing-box/rule-set-geosite/geosite-win-update.srs .
           cp -f sing-box/rule-set-geosite/geosite-yandex.srs .
           cp -f sing-box/rule-set-geosite/geosite-vk.srs .
+          cp -f sing-box/rule-set-geosite/geosite-telegram.srs .
 
       - name: Commit and push if changed
         run: |
