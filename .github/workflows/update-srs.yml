@@ -33,6 +33,7 @@ jobs:
           cp -f sing-box/rule-set-geoip/geoip-ru.srs .
           cp -f sing-box/rule-set-geoip/geoip-ru-blocked.srs .
           cp -f sing-box/rule-set-geoip/geoip-ru-blocked-community.srs .
+          cp -f sing-box/rule-set-geoip/geoip-telegram.srs .
 
           # geosite
           cp -f sing-box/rule-set-geosite/geosite-category-ru.srs .
