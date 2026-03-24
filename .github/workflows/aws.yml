@@ -1,0 +1,53 @@
+name: Update AWS GeoIP SRS
+
+on:
+  schedule:
+    # 06:00 по Москве = 03:00 UTC
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Install Sing-box
+        run: |
+          wget https://github.com/SagerNet/sing-box/releases/latest/download/sing-box-linux-amd64.tar.gz
+          tar -xzf sing-box-linux-amd64.tar.gz
+          sudo mv sing-box /usr/local/bin/sing-box
+          sing-box version
+
+      - name: Download AWS IPv4 ranges and build JSON
+        run: |
+          curl -s https://ip-ranges.amazonaws.com/ip-ranges.json -o aws_raw.json
+
+          # Формируем JSON только с IPv4
+          jq '{
+            version: 1,
+            rules: [
+              {
+                ip_cidr: [
+                  .prefixes[].ip_prefix
+                ]
+              }
+            ]
+          }' aws_raw.json > geoip-aws.json
+
+      - name: Compile SRS
+        run: |
+          sing-box rule-set compile -o geoip-aws.srs geoip-aws.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add geoip-aws.json geoip-aws.srs
+          git commit -m "Auto-update AWS GeoIP SRS" || echo "No changes"
+          git push
