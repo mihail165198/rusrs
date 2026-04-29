@@ -34,8 +34,8 @@ jobs:
       - name: Copy required SRS files
         run: |
           # geoip
-          cp -f sing-box/rule-set-geoip/geoip:cloudflare.srs .
-          cp -f sing-box/rule-set-geoip/geoip:cloudfront.srs .
+          cp -f sing-box/rule-set-geoip/geoip-cloudflare.srs .
+          cp -f sing-box/rule-set-geoip/geoip-cloudfront.srs .
           cp -f sing-box/rule-set-geoip/geoip-ru-blocked-community.srs .
           cp -f sing-box/rule-set-geoip/geoip-telegram.srs .
 
@@ -59,7 +59,7 @@ jobs:
           cp -f sing-box/rule-set-geosite/geosite-yandex.srs .
           cp -f sing-box/rule-set-geosite/geosite-vk.srs .
           cp -f sing-box/rule-set-geosite/geosite-telegram.srs .
-          cp -f sing-box/rule-set-geosite/geosite:antifilter-download-community.srs .
+          cp -f sing-box/rule-set-geosite/geosite-antifilter-download-community.srs .
 
       - name: Commit and push if changed
         run: |
