@@ -13,7 +13,11 @@
         "discordactivities.com"
       ],
       "domain_keyword": [
-        "discord"
+        "discord",
+        "discord.media"
+      ],
+      "domain_regex": [
+        "^.*discord\\.media$"
       ]
     }
   ]
