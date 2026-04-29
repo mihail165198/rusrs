@@ -1,0 +1,45 @@
+name: Build Discord SRS
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # каждый день в 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install sing-box
+        run: |
+          curl -fsSL https://sing-box.app/install.sh | bash
+          echo "$HOME/.sing-box" >> $GITHUB_PATH
+
+      - name: Prepare output directory
+        run: mkdir -p output
+
+      - name: Compile Discord SRS
+        run: |
+          sing-box rule-set compile \
+            -o output/discord.srs \
+            rules/discord.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add output/discord.srs
+
+          if git diff --cached --quiet; then
+            echo "No changes detected"
+          else
+            git commit -m "Update Discord SRS"
+            git push
+          fi
