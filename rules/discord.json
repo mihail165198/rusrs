@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "domain_suffix": [
+        "discord.com",
+        "discord.gg",
+        "discordapp.com",
+        "discordapp.net",
+        "discord.media",
+        "discord.co",
+        "discordstatus.com",
+        "discordactivities.com"
+      ],
+      "domain_keyword": [
+        "discord"
+      ]
+    }
+  ]
+}
