@@ -60,6 +60,8 @@ jobs:
           cp -f sing-box/rule-set-geosite/geosite-vk.srs .
           cp -f sing-box/rule-set-geosite/geosite-telegram.srs .
           cp -f sing-box/rule-set-geosite/geosite-antifilter-download-community.srs .
+          cp -f sing-box/rule-set-geosite/geosite-epicgames.srs .
+
 
       - name: Commit and push if changed
         run: |
